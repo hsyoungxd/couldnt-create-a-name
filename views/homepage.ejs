@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Home</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f0f0f0;
+                color: #333;
+                margin: 20px;
+            }
+
+            .container1 {
+                border-radius: 20px;
+                max-width: 600px;
+                margin: auto;
+                margin-top: 20px;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .container2 {
+                border-radius: 20px;
+                max-width: 600px;
+                margin: auto;
+                margin-top: 20px;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .quote {
+                font-style: italic;
+            }
+
+            .author {
+                text-align: right;
+                margin-top: 20px;
+            }
+            .navbar {
+                background-color: #333;
+                border-radius: 30px;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px 20px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .nav-links {
+                list-style-type: none;
+                padding: 0;
+                display: flex;
+                margin: 0;
+            }
+
+            .nav-links li {
+                margin: 0 10px; 
+            }
+
+            .nav-links li a {
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 10px 15px;
+                text-decoration: none;
+                border-radius: 50px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .nav-links li a:hover {
+                background-color: #ddd;
+                color: black;
+            }
+
+            @media screen and (max-width: 600px) {
+                .nav-links {
+                    flex-direction: column;
+                }
+
+                .nav-links li {
+                    margin: 5px 0;
+                }
+
+                .navbar {
+                    padding: 20px;
+                }
+            }
+            .logout-button {
+                background: none;
+                font-size: 16px;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 50px; 
+                font-family: 'Arial', sans-serif; 
+                cursor: pointer;
+                transition: background-color 0.3s, color 0.3s; 
+            }
+
+            .logout-button:hover {
+                background-color: #ddd;
+                color: black;
+            }
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/portfolios">Portfolios</a></li>
+                <li><form action="/logout" method="POST"><button type="submit" class="logout-button">Log out</button></form></li>
+            </ul>
+        </nav>
+        <div class="container1">
+            <h1>Random Anime Quote</h1>
+            <% if (quote) { %>
+                <p class="quote"><%= quote.quote %></p>
+                <p class="author"><strong>- <%= quote.character %> (<%= quote.anime %>)</strong></p>
+            <% } %>
+        </div>
+        <div class="container2">
+            <% if (exchangeData) { %>
+                <canvas id="exchangeChart"></canvas>
+            <% } %>
+        </div>
+        <script>
+            const exchangeData = <%- JSON.stringify(exchangeData) %>;
+            const selectedCurrencies = ["EUR", "GBP", "JPY", "CAD", "RUB", "KZT", "CNY"];
+            const filteredRates = Object.keys(exchangeData.rates)
+                .filter(key => selectedCurrencies.includes(key))
+                .reduce((obj, key) => {
+                    obj[key] = exchangeData.rates[key];
+                    return obj;
+                }, {});
+            const currencyLabels = Object.keys(filteredRates);
+            const exchangeRates = Object.values(filteredRates);
+            const ctx = document.getElementById('exchangeChart').getContext('2d');
+            const exchangeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: currencyLabels,
+                    datasets: [{
+                        label: 'Exchange Rate',
+                        data: exchangeRates,
+                        backgroundColor: [
+                            // Define colors for each currency
+                            'rgba(255, 99, 132, 0.2)', // USD
+                            'rgba(54, 162, 235, 0.2)', // EUR
+                            'rgba(255, 206, 86, 0.2)', // GBP
+                            'rgba(75, 192, 192, 0.2)', // JPY
+                            'rgba(153, 102, 255, 0.2)', // CAD
+                            'rgba(255, 159, 64, 0.2)', // RUB
+                            'rgba(255, 99, 132, 0.2)', // KZT
+                            'rgba(54, 162, 235, 0.2)'  // CNY
+                        ],
+                        borderColor: [
+                            // Define border colors for each currency
+                            'rgba(255,99,132,1)', // USD
+                            'rgba(54, 162, 235, 1)', // EUR
+                            'rgba(255, 206, 86, 1)', // GBP
+                            'rgba(75, 192, 192, 1)', // JPY
+                            'rgba(153, 102, 255, 1)', // CAD
+                            'rgba(255, 159, 64, 1)', // RUB
+                            'rgba(255,99,132,1)', // KZT
+                            'rgba(54, 162, 235, 1)'  // CNY
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Exchange Rates Against USD'
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <div class="container2">
+            <% if (cryptoData) { %>
+                <canvas id="cryptoChart"></canvas>
+            <% } %>
+        </div>
+        <script>
+            const cryptoData = <%- JSON.stringify(cryptoData) %>;
+            const prices = cryptoData.prices.map(price => price[1]);
+            const dates = cryptoData.prices.map(price => new Date(price[0]).toLocaleDateString());
+            const ctx2 = document.getElementById('cryptoChart').getContext('2d');
+            const myChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Bitcoin Price (USD)',
+                    data: prices,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+                }
+            });
+        </script>
+    </body>
+</html>

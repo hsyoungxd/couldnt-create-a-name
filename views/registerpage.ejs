@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .registration-form {
+            width: 400px; /* Fixed width for symmetry */
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .registration-form h2 {
+            text-align: center; /* Center the title for symmetry */
+            margin: 0 0 20px;
+            color: #333;
+        }
+        .form-control {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-control input, .form-control button {
+            width: 80%; /* Full width for symmetry */
+            padding: 10px;
+            margin: 5px 0; /* Consistent margin for symmetry */
+            box-sizing: border-box;
+        }
+        input {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="registration-form">
+        <h2>Registration Form</h2>
+
+        <% if(typeof messages != 'undefined'){ %>
+            <% if(messages.length > 0){ %>
+            <div class="form-control">
+                <ul>
+                    <% messages.forEach(message => {%>
+                    <li><%= message.message %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% }} %>
+        
+        <form action="/register" method="POST">
+            <div class="form-control">
+                <input type="text" name="name" placeholder="Name" value="<%= name ? name : '' %>" required>
+            </div>
+            <div class="form-control">
+                <input type="email" name="email" placeholder="Email Address" value="<%= email ? email : '' %>" required>
+            </div>
+            <div class="form-control">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="form-control">
+                <input type="password" name="cpassword" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-control">
+                <button type="submit">Register</button>
+            </div>
+            <div class="form-control">
+                <a href="/login">Have an account? Login here</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
